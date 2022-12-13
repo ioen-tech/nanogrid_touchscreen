@@ -1,0 +1,32 @@
+{
+  "name": "nanogrid",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "browser": {
+    "http": false,
+    "https": false
+  },
+  "dependencies": {
+    "axios": "^1.2.1",
+    "core-js": "^3.6.5",
+    "date": "^2.0.2",
+    "https": "^1.0.0",
+    "https-browserify": "^1.0.0",
+    "vue": "^3.0.0",
+    "web3": "^1.8.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/compiler-sfc": "^3.0.0-0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.7.1"
+  }
+}
