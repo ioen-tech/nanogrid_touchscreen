@@ -1,5 +1,5 @@
 <template>
-    <body :class="generating ? 'bodygenerating' : 'bodyconsuming'">
+    <body :class=generating>
         <div id="clock">
             <h2 class="date">{{ date }}</h2>
             <h1 class="time">{{ time }}</h1>
@@ -18,13 +18,20 @@
     export default {
             data() {
                 return {
-                    generating: false,
+                    generating: "bodyconsuming",
                     balance: null,
                     date: " ",
                     time: " ",
                     redeemPressed: false,
-                    myFronius: {exists:"", userId:"simon@decentralize.global", password:"High3tt@", accessKeyId:"FKIAAB27DE06AEFF4C14B2F9559FA75CB559", accessKeyValue:"8807d6c0-0a4a-4b9d-b943-e7c1ab3e5627"}, //this will go to the agents DHT
+                    myFronius: {
+                        exists:"", 
+                        userId: process.env.VUE_APP_FRONIUS_USERID, 
+                        password: process.env.VUE_APP_FRONIUS_PASSWORD, 
+                        accessKeyId: process.env.VUE_APP_FRONIUS_ACCESS_KEY_ID, 
+                        accessKeyValue: process.env.VUE_APP_FRONIUS_ACCESS_KEY_VALUE,
+                    }, //this will go to the agents DHT
                     url: 'https://api.solarweb.com/swqapi/iam/jwt',
+                    ioenWallet: process.env.VUE_APP_ERC_WALLET,
                     bearer: "",
                 };
             },
@@ -32,8 +39,8 @@
             created() {
                     var self = this;
                     setInterval(function() { self.getTime();}, 5000);
-                    setInterval(function() { self.froniusjwt();}, 29000);
-                    setInterval(function() { self.calculatePowerRequirements(); }, 300000);
+                    setInterval(function() { self.froniusjwt();}, 300000);
+                    setInterval(function() { self.calculatePowerRequirements(); }, 150000);
                     setInterval(function() { self.getBalance(); }, 10000);
                 },
 
@@ -108,27 +115,30 @@
                         }
                     };
 
-                    axios(config)
+                    await axios(config)
                         .then(function (response) {
-                        myRequiredEnergy = JSON.stringify(response.data.data.channels[0].value);    
-                        console.log(myRequiredEnergy + "W");
+                        myRequiredEnergy = parseInt(JSON.stringify(response.data.data.channels[0].value), 10);    
+                        console.log(myRequiredEnergy);
                         // console.log(JSON.stringify(response.data.data.channels[0].value));  //value in W
                         // console.log("from axios:" + myRequiredEnergy);  //value in W
                         })
                         .catch(function (error) {
                         console.log(error);
                         });
-                    if (+myRequiredEnergy < 0) {
-                        this.generating = true; 
-                        console.log("we are selling" + this.generating);
+                    if (myRequiredEnergy === 0) {
+                         this.generating = "bodyeven"; 
+                        console.log("we are balanced" + this.generating);
+                    } else if (myRequiredEnergy > 0) {
+                        this.generating = "bodyconsuming"; 
+                        console.log("we are buying energy" + this.generating);
                     } else {
-                         this.generating = false; 
-                        console.log("we are buying" + this.generating);
-                        }
+                        this.generating = "bodygenerating";
+                        console.log("we are selling eneregy" + this.generating);
+                    }
                 },
 
                 async getBalance() {
-                    console.log("running balance function");
+                    // console.log("running balance function");
                     const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/5d1da3b5535842f384c0422aabd2401a'));
                     const balanceOfABI = [
                         {
@@ -152,12 +162,11 @@
                         },
                    ];
                    const tokenContract = "0x1e4E46b7BF03ECE908c88FF7cC4975560010893A";
-                   const tokenHolder = "0xCCCE7DB45b929119d63222B0Be8eD710E289cE37";
+                   const tokenHolder = this.ioenWallet;
                    const contract = new web3.eth.Contract(balanceOfABI, tokenContract);
                    let result = await contract.methods.balanceOf(tokenHolder).call();
                    const formattedBalance = web3.utils.fromWei(result, "ether");
                    this.balance = Math.trunc(formattedBalance);
-                   console.log(formattedBalance);
                 },
             }
     };
@@ -180,6 +189,13 @@ html {
   height: 100%;
   background: #00cc99;
   background: radial-gradient(ellipse at center, #00cc99 0%, #041419 70%);
+  background-size: 100%;
+}
+
+.bodyeven {
+  height: 100%;
+  background: #e6cc0a;
+  background: radial-gradient(ellipse at center, #e6cc0a 0%, #041419 70%);
   background-size: 100%;
 }
 
