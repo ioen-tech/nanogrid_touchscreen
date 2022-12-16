@@ -5,9 +5,9 @@
             <h1 class="time">{{ time }}</h1>
             <div><redeem-ioen v-if="redeemPressed" @close="redeem()"></redeem-ioen></div>
             <img src="./Logo200px.gif"/>
-            <p>{{ balance }}</p>
-            <p>IOEN</p>
+            <p>AccruedIOEN: {{ accrued }}</p>
             <button @click="redeem">REDEEM</button>
+            <p>MyIOEN: {{ balance }}</p>
         </div>
     </body>
 </template>
@@ -20,6 +20,10 @@
                 return {
                     generating: "bodyconsuming",
                     balance: null,
+                    accrued: 0,
+                    stakedIoen: 1000,
+                    distributionAmount: null,
+                    yield: 0.1,
                     date: " ",
                     time: " ",
                     redeemPressed: false,
@@ -40,7 +44,10 @@
                     var self = this;
                     setInterval(function() { self.getTime();}, 5000);
                     setInterval(function() { self.froniusjwt();}, 300000);
-                    setInterval(function() { self.calculatePowerRequirements(); }, 150000);
+                    setInterval(function() { 
+                        self.calculatePowerRequirements();
+                        self.payments(); 
+                    }, 150000);
                     setInterval(function() { self.getBalance(); }, 10000);
                 },
 
@@ -48,7 +55,7 @@
                 redeem() {  
                     this.redeemPressed = !this.redeemPressed;    
                     console.log("cash out your IOEN");
-                    this.balance = 0;
+                    this.accrued = 0;
                 },
 
                 getTime() {
@@ -70,7 +77,6 @@
                     this.time = time;
                     // console.log(this.date + " " + this.time);
                 },
-
 
                 async froniusjwt() {
 
@@ -168,6 +174,24 @@
                    const formattedBalance = web3.utils.fromWei(result, "ether");
                    this.balance = Math.trunc(formattedBalance);
                 },
+
+                payments() {
+                    if (this.generating === "bodyeven") {
+                        this.distributionAmount = this.stakedIoen * this.yield;
+                        this.accrued = this.accrued + this.distributionAmount;
+                        this.distributionAmount = this.distributionAmount - this.accrued;
+                        console.log("youve just been given " + this.distributionAmount + " your IOEN balance is: " + this.accrued);
+                    } else {
+                        return;
+                    }
+                },
+
+                payout() {
+                    //how much accrued
+                    //pay that amount to this user
+                    //reset accrued amount to 0
+                }
+
             }
     };
 </script>
