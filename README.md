@@ -36,20 +36,25 @@ DONE:
 TODO:
 
 - create generating/consuming/balanced as DHT value with aggregate of all subscribers.
-- create node instance for ceegee fronius
 
+LATER TODO:
+
+- create node instance for ceegee fronius
 - create a staking smart contract to hold IOEN
 - create a redeem function in nanogrid that withdraws 'accrued' amount of IOEN from a web3 wallet.
 - reset the accrued value to 0
 - enable other applications so touchscreen is useful in van (spotify, netflix, iheartradio)
-
-LATER TODO:
-
 - add solaredge api support
 - add tesla api support
 - add tuya api support
 
 IOEN DISTRIBUTION WORKFLOW
+
+-run holochain node instance on nanogrid
+-create wallet for nanogrid
+-add group oracle NUMBER for agents
+
+
 
 - User stakes IOEN into staking contract for 4 months
 - IOEN Offers +40% matched collateral for an Energy User Group on Total Staked value
