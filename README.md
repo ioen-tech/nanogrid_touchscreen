@@ -25,24 +25,25 @@ FRONIUS_PASSWORD=xxx//fronius password:
 FRONIUS_ACCESS_KEY_ID=xxx//fronius accessKeyId:
 FRONIUS_ACCESS_KEY_VALUE=xxx//fronius accessKeyValue:
 
-ENERGY_GROUP_DHT=""//user energy group dht
+ENERGY_GROUP_DHT=""//user energy group dht TODO
 ``
 
 DONE:
 - update with another colour for background so 3 options (consume, generate, balance)
 - as a user I can add my inverter details to a .env file and they come from there.
 - add accrued IOEN data
+- create a redeem function in nanogrid that withdraws 'accrued' amount of IOEN from a web3 wallet.
+- reset the accrued value to 0
+- create function iterating through energy values and calculates aggregate of all subscribers.
 
 TODO:
 
-- create generating/consuming/balanced as DHT value with aggregate of all subscribers.
+- research rain protocol for staking and payment distributions
 
 LATER TODO:
 
 - create node instance for ceegee fronius
 - create a staking smart contract to hold IOEN
-- create a redeem function in nanogrid that withdraws 'accrued' amount of IOEN from a web3 wallet.
-- reset the accrued value to 0
 - enable other applications so touchscreen is useful in van (spotify, netflix, iheartradio)
 - add solaredge api support
 - add tesla api support
