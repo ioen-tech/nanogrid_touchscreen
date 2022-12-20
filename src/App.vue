@@ -8,6 +8,7 @@
             <p>AccruedIOEN: {{ accrued }}</p>
             <button @click="redeem">REDEEM</button>
             <p>MyIOEN: {{ balance }}</p>
+            <p> Group Energy: {{ groupEnergy }}</p>
         </div>
     </body>
 </template>
@@ -15,6 +16,7 @@
 <script>
     import axios from 'axios';
     import Web3 from 'web3';
+
     export default {
             data() {
                 return {
@@ -37,18 +39,27 @@
                     url: 'https://api.solarweb.com/swqapi/iam/jwt',
                     ioenWallet: process.env.VUE_APP_ERC_WALLET,
                     bearer: "",
+                    myEnergy: 0,
+                    groupEnergy: 1,
                 };
             },
             
             created() {
                     var self = this;
+    
+                    self.froniusjwt(); //get new jwt when loaded
                     setInterval(function() { self.getTime();}, 5000);
-                    setInterval(function() { self.froniusjwt();}, 300000);
                     setInterval(function() { 
-                        self.calculatePowerRequirements();
-                        self.payments(); 
-                    }, 150000);
-                    setInterval(function() { self.getBalance(); }, 10000);
+                        self.getBalance();
+                     }, 10000);
+                    setInterval(async function() { 
+                        await self.calculatePowerRequirements(); //what is my power requirements. update myEnergy value
+                        await self.updateDatabaseValue();//push my value into the database
+                        await self.calculateGroupPower();//go through dbase entries and calculate aggregated energy value and update groupEnergy value
+                        await self.updateBackground();//update background based on groupEnergy value
+                        await self.payments();//make payments if groupEnergy value is balanced.
+                    }, 300000); //5 minute intervals
+                    setInterval(function() { self.froniusjwt();}, 1800000); //update jwt every 2 hours
                 },
 
             methods: {
@@ -87,9 +98,6 @@
                          password: this.myFronius.password,
                      },
                      {
-                    //  httpsAgent: new https.Agent({
-                        // rejectUnauthorized: false
-                        // }),
                         headers: {   accept: 'application/json',
                                      AccessKeyId: this.myFronius.accessKeyId,
                                      AccessKeyValue: this.myFronius.accessKeyValue
@@ -106,8 +114,6 @@
                 },
 
                 async calculatePowerRequirements() {
-                    // this.generating = !this.generating;  
-                    // console.log(this.generating);
                     var myRequiredEnergy;
                     var config = {
                         method: 'get',
@@ -120,26 +126,59 @@
                             // 'Cookie': 'TS01329c72=015bdaa26885819ae3883fac9079973fab3e0f378286b111811e5eb6184cddb3c825e8963d6ec9bd73a8cb6ba71322822b2d10df47; lbc=!szSBRSKIJgrL8YGebLrGiH4EM+a4Dj46J78cza9Z2AQnRYL3soOJSFmaDjffQVVVhKKC2gNlqzbFSirl3r907RpROcC32hFNDNppQVl75Zg='
                         }
                     };
-
+                    
                     await axios(config)
                         .then(function (response) {
                         myRequiredEnergy = parseInt(JSON.stringify(response.data.data.channels[0].value), 10);    
-                        console.log(myRequiredEnergy);
-                        // console.log(JSON.stringify(response.data.data.channels[0].value));  //value in W
-                        // console.log("from axios:" + myRequiredEnergy);  //value in W
                         })
                         .catch(function (error) {
                         console.log(error);
                         });
-                    if (myRequiredEnergy === 0) {
+                    this.myEnergy = myRequiredEnergy; //update Vue myEnergy data property
+                    console.log("from api: " + myRequiredEnergy + " from VUE: " + this.myEnergy);
+                },
+
+                async calculateGroupPower() {
+                    let groupCalc = 9999;
+                    await axios.get('https://nanogrid-25455-default-rtdb.asia-southeast1.firebasedatabase.app/agg_energy.json')
+                        .then(function (data) {
+                            let ceegee = parseInt(JSON.stringify(data.data.ceegee_energy), 10);
+                            let simwilso = parseInt(JSON.stringify(data.data.simwilso_energy), 10);
+                            groupCalc = ceegee + simwilso;
+                            // console.log(ceegee + " : " + simwilso);
+                        });
+                    this.groupEnergy = groupCalc;
+                    console.log("group calc value is: " + groupCalc);
+                    //iterate through individual power values
+                    //update aggregated energy value for group
+                },
+
+                async getFromDatabase() {
+                    var simwilsoEnergy = null;
+                    await axios.get('https://nanogrid-25455-default-rtdb.asia-southeast1.firebasedatabase.app/agg_energy.json')
+                        .then(data => {
+                            simwilsoEnergy = parseInt(JSON.stringify(data.data.simwilso_energy), 10);
+                        });
+                    this.groupEnergy = simwilsoEnergy;
+                },
+
+                async updateDatabaseValue() {
+                    await axios.patch('https://nanogrid-25455-default-rtdb.asia-southeast1.firebasedatabase.app/agg_energy.json', {
+                        simwilso_energy: this.myEnergy,
+                        });
+                        console.log("database entry updated to:" + this.myEnergy);
+                },
+
+                async updateBackground() {
+                    if (this.groupEnergy === 0) {
                          this.generating = "bodyeven"; 
-                        console.log("we are balanced" + this.generating);
-                    } else if (myRequiredEnergy > 0) {
-                        this.generating = "bodyconsuming"; 
-                        console.log("we are buying energy" + this.generating);
+                        // console.log("we are balanced" + this.generating);
+                    } else if (this.groupEnergy < 0) {
+                        this.generating = "bodygenerating"; 
+                        // console.log("we are selling energy" + this.generating);
                     } else {
-                        this.generating = "bodygenerating";
-                        console.log("we are selling eneregy" + this.generating);
+                        this.generating = "bodyconsuming";
+                        // console.log("we are buying eneregy" + this.generating);
                     }
                 },
 
