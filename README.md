@@ -24,9 +24,11 @@ FRONIUS_USERID=xxx@xxx//fronius userId:
 FRONIUS_PASSWORD=xxx//fronius password:
 FRONIUS_ACCESS_KEY_ID=xxx//fronius accessKeyId:
 FRONIUS_ACCESS_KEY_VALUE=xxx//fronius accessKeyValue:
+VUE_APP_FRONIUS_DEVICE_ID=https://api.solarweb.com/swqapi/pvsystems/<YOUR DEVICE ID>/flowdata
 
 ENERGY_GROUP_DHT=""//user energy group dht TODO
 ``
+NOTE: <user will need to apply for REST API Access.  YOUR DEVICE ID is found in the solar.web URL portal.
 
 DONE:
 - update with another colour for background so 3 options (consume, generate, balance)

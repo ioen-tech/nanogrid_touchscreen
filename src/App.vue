@@ -36,7 +36,7 @@
                         accessKeyId: process.env.VUE_APP_FRONIUS_ACCESS_KEY_ID, 
                         accessKeyValue: process.env.VUE_APP_FRONIUS_ACCESS_KEY_VALUE,
                     }, //this will go to the agents DHT
-                    url: 'https://api.solarweb.com/swqapi/iam/jwt',
+                    url: process.env.VUE_APP_FRONIUS_DEVICE_ID,
                     ioenWallet: process.env.VUE_APP_ERC_WALLET,
                     bearer: "",
                     myEnergy: 0,
@@ -117,7 +117,7 @@
                     var myRequiredEnergy;
                     var config = {
                         method: 'get',
-                        url: 'https://api.solarweb.com/swqapi/pvsystems/ae93ef37-777f-41ec-b289-0c634f0a8e9b/flowdata',
+                        url: this.url,
                         headers: { 
                             'accept': 'application/json', 
                             'AccessKeyId': this.myFronius.accessKeyId, 
