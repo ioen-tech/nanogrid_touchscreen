@@ -145,7 +145,6 @@
                             let ceegee = parseInt(JSON.stringify(data.data.ceegee_energy), 10);
                             let simwilso = parseInt(JSON.stringify(data.data.simwilso_energy), 10);
                             groupCalc = ceegee + simwilso;
-                            // console.log(ceegee + " : " + simwilso);
                         });
                     this.groupEnergy = groupCalc;
                     console.log("group calc value is: " + groupCalc);
@@ -170,10 +169,10 @@
                 },
 
                 async updateBackground() {
-                    if (this.groupEnergy === 0) {
+                    if (this.groupEnergy > -200 && this.groupEnergy < 200) {
                          this.generating = "bodyeven"; 
                         // console.log("we are balanced" + this.generating);
-                    } else if (this.groupEnergy < 0) {
+                    } else if (this.groupEnergy < -200) {
                         this.generating = "bodygenerating"; 
                         // console.log("we are selling energy" + this.generating);
                     } else {
