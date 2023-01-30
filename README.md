@@ -40,12 +40,12 @@ Backend leverages:
   - i can only be a member of 1 group at a time.
 
 - calculate energy 
- - the application host (NPM) will query each user in a group every 5 minutes and 'sum' all the values.
- - the 'sum' value as well as a status (balanced/consuming/producing) is published to a Holochain DHT for that group
+  - the application host (NPM) will query each user in a group every 5 minutes and 'sum' all the values.
+  - the 'sum' value as well as a status (balanced/consuming/producing) is published to a Holochain DHT for that group
 
 - distribute rewards
- - every hour the application host (NPM) will work out how many of the intervals had a 'balanced' status.
- - the app will distribute IOEN to member wallets based on how many intervals with distribution weighting.
+  - every hour the application host (NPM) will work out how many of the intervals had a 'balanced' status.
+  - the app will distribute IOEN to member wallets based on how many intervals with distribution weighting.
 
 ## capability
 
