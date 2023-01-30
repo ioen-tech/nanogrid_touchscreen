@@ -1,5 +1,54 @@
 # nanogrid_touchscreen
 
+This is a mobile friendly app and game where the goal is to form a group with friends and/or local neighbours that acheives a balanced grid (neither consuming or producing excess electricity) which is the goal of any grid.
+
+* The game starts with a pool of IOEN Tokens which are deposited and used as rewards/prize for the group.
+* A group of users form a team and can add/remove users from it.
+* The game monitors user members electricity meters at 5 minute intervals.
+* For every 5 minute interval it adds up all the members values and determines if the group is producing, consuming, or balanced.
+* For the interval that status is logged and the users app/device glows in a colour to reflect the status
+* At the end of each hour the application determines what proportion of the time the group achieved 'balanced grid'
+* IOEN tokens from the pool are distributed to member users based on their performance and shown in the users IOEN wallet on the app.
+
+App UI is written in VUE JS.
+Backend leverages:
+  1) JS calls to user meter solution API
+  2) Holochain DHT for aggregated group interval state (balanced/consuming/producing and a number)
+  3) Ethereum via RAIN for; user wallet, group staking contract, automatic IOEN ERC distributions every hour)
+ all above will use NODE JS
+
+# User Stories TODO
+
+- user enrollment:
+  - as a user I can register to the mobile app and create a new ethereum wallet for myself through the interface enrollment process
+  - once created the VUE app shows my Eth and IOEN balance
+  - I can send some ethereum to my wallet and my balance is updated to reflect
+  - as a user on enrollment I enter the credentials for my Fronius, Tesla meter and the app provides a connected/not connected indicator.
+ 
+ - new group creation:
+  - as group creator I can create a new (energy group) with a name and reward multiplier specified
+  - my user wallet is allocated as the group owner
+  - I click a create button and the app backend creates a new staking contract on Ethereum mainnet
+  - Details of the balance IOEN and ETH in the new contract is displayed in my app dashboard
+  - Anyone can add IOEN tokens and Eth to that contract and as owner I can withdraw those tokens if needed.
+
+ - sign up users to my group
+  - as a user of the app can join an energy group by entering the contract address of that group
+  - anyone who is in a group sees a list of group members with a flag indicating who is the 'owner/admin' for that group.
+  - the IOEN and Eth balance for my group is shown in the app
+  - my own IOEN wallet balance is shown in the app
+  - i can only be a member of 1 group at a time.
+
+- calculate energy 
+ - the application host (NPM) will query each user in a group every 5 minutes and 'sum' all the values.
+ - the 'sum' value as well as a status (balanced/consuming/producing) is published to a Holochain DHT for that group
+
+- distribute rewards
+ - every hour the application host (NPM) will work out how many of the intervals had a 'balanced' status.
+ - the app will distribute IOEN to member wallets based on how many intervals with distribution weighting.
+
+## capability
+
 initial working nanogrid for touchscreen design and fronius integration.
 capabilities:
 
