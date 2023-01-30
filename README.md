@@ -25,14 +25,14 @@ Backend leverages:
   - I can send some ethereum to my wallet and my balance is updated to reflect
   - as a user on enrollment I enter the credentials for my Fronius, Tesla meter and the app provides a connected/not connected indicator.
  
- - new group creation:
+- new group creation:
   - as group creator I can create a new (energy group) with a name and reward multiplier specified
   - my user wallet is allocated as the group owner
   - I click a create button and the app backend creates a new staking contract on Ethereum mainnet
   - Details of the balance IOEN and ETH in the new contract is displayed in my app dashboard
   - Anyone can add IOEN tokens and Eth to that contract and as owner I can withdraw those tokens if needed.
 
- - sign up users to my group
+- sign up users to my group
   - as a user of the app can join an energy group by entering the contract address of that group
   - anyone who is in a group sees a list of group members with a flag indicating who is the 'owner/admin' for that group.
   - the IOEN and Eth balance for my group is shown in the app
